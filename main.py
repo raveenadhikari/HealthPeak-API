@@ -24,6 +24,9 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.get("/")
+async def health_check():
+    return {"status": "up"}
 
 # 3) Load your trained pipeline
 pipeline = joblib.load("logistic_pipeline_model.pkl")
