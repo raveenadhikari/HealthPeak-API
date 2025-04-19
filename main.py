@@ -24,20 +24,25 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+# Replace your pipeline loading line:
+try:
+    pipeline = joblib.load("logistic_pipeline_model.pkl")
+    model_load_error = None
+except Exception as e:
+    pipeline = None
+    model_load_error = str(e)
+
 @app.get("/debug")
 async def debug_files():
     import os
     return {
         "files": os.listdir(),
-        "cwd": os.getcwd()
+        "cwd": os.getcwd(),
+        "model_load_error": model_load_error
     }
 
-@app.get("/")
-async def health_check():
-    return {"status": "up"}
-
 # 3) Load your trained pipeline
-pipeline = joblib.load("logistic_pipeline_model.pkl")
+#pipeline = joblib.load("logistic_pipeline_model.pkl")
 
 # 4) Extract real feature names from the ColumnTransformer
 preproc = pipeline.named_steps["preprocessing"]
