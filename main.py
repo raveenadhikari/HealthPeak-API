@@ -1,6 +1,9 @@
 # main.py
 import warnings
 from sklearn.exceptions import InconsistentVersionWarning
+import os
+import uvicorn
+
 
 # 1) Silence scikit‑learn version mismatch warnings
 warnings.filterwarnings("ignore", category=InconsistentVersionWarning)
@@ -136,3 +139,7 @@ def predict(data: InputData):
         "probability": float(proba),
         "contributions": top5
     }
+
+if __name__ == "__main__":
+    port = int(os.environ.get("PORT", 8000))
+    uvicorn.run("main:app", host="0.0.0.0", port=port)
