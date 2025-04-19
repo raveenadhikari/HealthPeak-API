@@ -19,30 +19,26 @@ from sklearn.pipeline import Pipeline
 app = FastAPI()
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["http://localhost:3000"],  # adjust for your frontend
+    allow_origins=["http://localhost:3000",
+                   "https://meta-predict-web.vercel.app"],  # adjust for your frontend
     allow_credentials=True,
     allow_methods=["*"],
     allow_headers=["*"],
 )
-# Replace your pipeline loading line:
-try:
-    pipeline = joblib.load("logistic_pipeline_model.pkl")
-    model_load_error = None
-except Exception as e:
-    pipeline = None
-    model_load_error = str(e)
-
 @app.get("/debug")
 async def debug_files():
     import os
     return {
         "files": os.listdir(),
-        "cwd": os.getcwd(),
-        "model_load_error": model_load_error
+        "cwd": os.getcwd()
     }
 
+@app.get("/")
+async def health_check():
+    return {"status": "up"}
+
 # 3) Load your trained pipeline
-#pipeline = joblib.load("logistic_pipeline_model.pkl")
+pipeline = joblib.load("logistic_pipeline_model.pkl")
 
 # 4) Extract real feature names from the ColumnTransformer
 preproc = pipeline.named_steps["preprocessing"]
