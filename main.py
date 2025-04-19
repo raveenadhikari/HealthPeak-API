@@ -24,6 +24,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+@app.get("/debug")
+async def debug_files():
+    import os
+    return {
+        "files": os.listdir(),
+        "cwd": os.getcwd()
+    }
+
 @app.get("/")
 async def health_check():
     return {"status": "up"}
